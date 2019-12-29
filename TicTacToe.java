@@ -1,12 +1,14 @@
 import java.util.ArrayList;
+import java.util.Scanner;
 
 
 
 public class TicTacToe {
-
+    //TODO: make init function
     private String[][] board = new String[3][3];
     private String x = "X";
     private String o = "O";
+    private boolean is_X_Turn = true; //always start as true
     
 
     public static void main(String[] args) {
@@ -36,6 +38,14 @@ public class TicTacToe {
         }
     }
 
+    private void changeTurn() {
+        if (is_X_Turn) {
+            is_X_Turn = false;
+        } else {
+            is_X_Turn = true;
+        }
+    }
+
     /**
      * Print the board.
      */
@@ -55,22 +65,56 @@ public class TicTacToe {
         return false;
     }
     
-    private void play() {
-        boolean is_X_Turn = true;
-
-        //MAIN GAME LOOP
-        while(!isWinner()){
-            if(is_X_Turn) 
+    private void printTurn() {
+        if(is_X_Turn) 
             {
-                System.out.println(x + "'s turn.");
-                is_X_Turn = false;
+                System.out.println(x + "'s turn. Enter a valid number.");
+                
             } else 
             {
-                System.out.println(o + "'s turn.");
-                is_X_Turn = true;
+                System.out.println(o + "'s turn. Enter a valid number.");
             }
-            // ask for user input -readline
-            // see if spot available, reprompt or put it in
+    }
+    private void play() {
+        //MAIN GAME LOOP
+        while(!isWinner()){
+            printTurn();
+            //GET USER INPUT
+            Scanner scanner = new Scanner(System.in);
+            //check for valid input number, if not throw exception
+            try {
+                int in = scanner.nextInt();
+                if (in >= 1 && in <=9){
+
+                    while (( board[(in-1)/3][(in-1)%3].equals("X") || board[(in-1)/3][(in-1)%3].equals("O"))) {
+                        System.out.println("INVALID INPUT: enter a space that has not been taken.");
+                        in = scanner.nextInt();
+
+                    }
+
+                    if(is_X_Turn){
+                        board[(in-1)/3][(in-1)%3] = "X";
+                    } else {
+                        board[(in-1)/3][(in-1)%3] = "0";
+                    }
+                    
+
+
+                    // if in is a valid spot, put it in
+                        //check for winner
+                        //move to next turn
+                    //else reprompt
+                    changeTurn();
+                    printBoard();
+                } else {
+                    throw new Exception(); 
+                }
+            } catch (Exception e){
+                System.err.println("Please enter a number 1-9.");
+            }
+            
+            
+
             
             
         }
