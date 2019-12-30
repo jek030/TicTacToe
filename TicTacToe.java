@@ -5,8 +5,8 @@ import java.util.Scanner;
 
 public class TicTacToe {
     private String[][] board;
-    private String x;
-    private String o;
+    private final String x;
+    private final String o;
     private boolean is_X_Turn;
 
     //init
@@ -24,10 +24,13 @@ public class TicTacToe {
         game.showInstructions();
         game.initializeBoard();
         game.printBoard();
-
+        //TODO: add loop for y/n play again?
         game.play();
     }
 
+    /**
+     * Shows the simple game instructions.
+     */
     private void showInstructions() {
         System.out.println("Welcome. Normal Tic-Tac-Toe rules. \nX will start first.\nChoose a cell labeled 1-9.\n");
     }
@@ -69,10 +72,80 @@ public class TicTacToe {
             
     }
     
+    /**
+     * Checks if the board contains a winner.
+     */
     private boolean isWinner() {
-        //check if board contains a winner, return true, else false
-        //aslo check if it is a tie
-        return false;
+        if(checkHorizontal())
+            return true;
+        else if (checkVertical())
+            return true;
+        else if (checkDiagonal())
+            return true;
+        else
+            return false;
+    }
+
+    /**
+     * Checks the diagonals for winners.
+     */
+    private boolean checkDiagonal() {
+        if ((board[0][0] + board[1][1] + board[2][2]).equals("XXX") ||             
+            (board[0][2] + board[1][1] + board[2][0]).equals("XXX")) 
+        {
+            System.out.println("GAME OVER!... X WINS!");
+            return true;
+        } else if ((board[0][0] + board[1][1] + board[2][2]).equals("OOO") ||             
+                    (board[0][2] + board[1][1] + board[2][0]).equals("OOO")) 
+        {
+            System.out.println("GAME OVER!... O WINS!");
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Checks the verticals for winners.
+     */
+    private boolean checkVertical() {
+        if ((board[0][0] + board[1][0] + board[2][0]).equals("XXX") ||             
+            (board[0][1] + board[1][1] + board[2][1]).equals("XXX") || 
+            (board[0][2] + board[1][2] + board[2][2]).equals("XXX"))  
+        {
+            System.out.println("GAME OVER!... X WINS!");
+            return true;
+        } else if ((board[0][0] + board[1][0] + board[2][0]).equals("OOO") ||             
+                    (board[0][1] + board[1][1] + board[2][1]).equals("OOO") || 
+                    (board[0][2] + board[1][2] + board[2][2]).equals("OOO"))
+        {
+            System.out.println("GAME OVER!... O WINS!");
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Checks the horizontals for winners.
+     * @return true - if winner
+     */
+    private boolean checkHorizontal() {
+        if ((board[0][0] + board[0][1] + board[0][2]).equals("XXX") ||             
+            (board[1][0] + board[1][1] + board[1][2]).equals("XXX") || 
+            (board[2][0] + board[2][1] + board[2][2]).equals("XXX"))  
+        {
+            System.out.println("GAME OVER!... X WINS!");
+            return true;
+        } else if ((board[0][0] + board[0][1] + board[0][2]).equals("OOO") ||
+                    (board[1][0] + board[1][1] + board[1][2]).equals("OOO") ||
+                    (board[2][0] + board[2][1] + board[2][2]).equals("OOO"))
+        {
+            System.out.println("GAME OVER!... O WINS!");
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -86,53 +159,51 @@ public class TicTacToe {
             }
     }
 
-
+    /**
+     * Main gameplay method. Runs until the board contains a winner. Places either X or O in correct spot and checks for legal move.
+     */
     private void play() {
+        //create scanner
+        Scanner scanner = new Scanner(System.in);
         //MAIN GAME LOOP
-        while(!isWinner()){
-            printTurn();
-            //GET USER INPUT
-            Scanner scanner = new Scanner(System.in);
-            //check for valid input number, if not throw exception
-            try {
-                int in = scanner.nextInt();
-                if (in >= 1 && in <=9){
-                    //maybe not the correct while loop, while (true) ... before all the in checking
-                    //
-                    while (( board[(in-1)/3][(in-1)%3].equals(x) || board[(in-1)/3][(in-1)%3].equals(o))) {
-                        System.out.println("INVALID INPUT: enter a space that has not been taken.");
-                        in = scanner.nextInt();
+        int i =0;
+        while((!isWinner()) && i < 9){
+            try { //check for valid input number, if not throw exception
+                    printTurn();
+                    int in = scanner.nextInt();
 
+                    if (in >= 1 && in <=9)
+                    {
+                        if (( board[(in-1)/3][(in-1)%3].equals(x) || board[(in-1)/3][(in-1)%3].equals(o))) 
+                        { // spot is taken, print msg and do nothing, while loop runs again.
+                            System.out.println("INVALID INPUT: enter a space that has not been taken."); //throw new space taken exception
+                        } 
+                        else 
+                        { //spot is not taken, put move in board, change turn, print board.
+                            
+                            if(is_X_Turn)
+                            {
+                                board[(in-1)/3][(in-1)%3] = x;
+                            } else 
+                            {
+                                board[(in-1)/3][(in-1)%3] = o;
+                            }
+                            changeTurn();
+                        }
+                    }//1-9 if
+                    else 
+                    {
+                        throw new Exception(); //not 1-9 number exception
                     }
-
-                    if(is_X_Turn){
-                        board[(in-1)/3][(in-1)%3] = x;
-                    } else {
-                        board[(in-1)/3][(in-1)%3] = o;
-                    }
-                    
-
-
-                    // if in is a valid spot, put it in
-                        //check for winner
-                        //move to next turn
-                    //else reprompt
-                    changeTurn();
-                    printBoard();
-                } else {
-                    throw new Exception(); 
-                }
             } catch (Exception e){
-                System.err.println("Please enter a number 1-9.");
-            }
-            
-            
-
-            
-            
-        }
-        
+                System.err.println("INVALID INPUT: enter a number 1-9."); //not an integer exception 
+            }  
+            printBoard();  
+             
+            i++;    
+            if(i ==9) {
+                System.out.println("Its a tie!");
+            }         
+        }   
     }
-
-
 }
